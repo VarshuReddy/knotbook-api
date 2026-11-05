@@ -90,6 +90,7 @@ public class RefreshTokenService {
         return oldToken;
     }
 
+    @Transactional
     public void revoke(String rawToken) {
 
         RefreshToken token = refreshTokenRepository
