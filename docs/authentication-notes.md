@@ -357,3 +357,48 @@ Flyway creates and changes the schema. Hibernate validates and works with it.
 **KnotBook authentication summary:**
 
 We use BCrypt for passwords, JWT with HS256 for short-lived access tokens, random opaque refresh tokens stored as SHA-256 hashes, and Spring Security Resource Server support to validate bearer tokens.
+## 16. Unit Testing with JUnit and Mockito
+
+### JUnit 5
+Testing framework used to write and execute automated tests.
+
+Common annotations:
+
+- `@Test`: Marks a test method.
+- `@BeforeEach`: Executes before every test.
+- `@ExtendWith`: Registers a JUnit extension.
+
+### Mockito
+Used to create mock dependencies so that a class can be tested independently.
+
+Common annotations:
+
+- `@Mock`: Creates a mock object.
+- `@InjectMocks`: Creates the actual class and injects its mock dependencies.
+
+Common methods:
+
+- `when().thenReturn()`: Defines mock behaviour.
+- `verify()`: Checks whether a method was called.
+- `never()`: Verifies that a method was never called.
+- `assertThrows()`: Verifies that an expected exception occurs.
+- `assertEquals()`: Compares expected and actual values.
+
+### Unit testing vs integration testing
+
+Unit testing:
+- Tests an individual class.
+- Mocks its external dependencies.
+- Runs quickly.
+- Does not require a real database.
+
+Integration testing:
+- Tests multiple components working together.
+- Can use a real database.
+- Verifies Spring configuration, repositories, security and transactions.
+
+### Why test authentication?
+
+Authentication contains security-sensitive logic. We need to verify successful and unsuccessful scenarios, including invalid credentials, expired tokens, token reuse and revocation.
+
+Our current unit tests cover registration, login and refresh-token service behaviour. Database locking and actual persistence still require integration tests.

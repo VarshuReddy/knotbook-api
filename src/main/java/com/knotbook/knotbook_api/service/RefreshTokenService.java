@@ -78,7 +78,7 @@ public class RefreshTokenService {
         String tokenHash = hashToken(rawToken);
 
         RefreshToken oldToken = refreshTokenRepository
-                .findByTokenHash(tokenHash)
+                .findByTokenHashForUpdate(tokenHash)
                 .orElseThrow(this::invalidToken);
 
         if (oldToken.isRevoked() || oldToken.isExpired()) {
@@ -94,7 +94,7 @@ public class RefreshTokenService {
     public void revoke(String rawToken) {
 
         RefreshToken token = refreshTokenRepository
-                .findByTokenHash(hashToken(rawToken))
+                .findByTokenHashForUpdate(hashToken(rawToken))
                 .orElseThrow(this::invalidToken);
 
         if (token.isRevoked() || token.isExpired()) {
