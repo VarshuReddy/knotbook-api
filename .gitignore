@@ -18,6 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
+.idea/
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -31,3 +33,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment secrets
+.env
+.env.*
+
+# OS
+.DS_Store
