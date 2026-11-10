@@ -1,6 +1,8 @@
 package com.knotbook.knotbook_api.exception;
 
 
+import com.knotbook.knotbook_api.dto.response.ApiErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -23,20 +26,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(
-            MethodArgumentNotValidException ex) {
-
-        Map<String, String> errors = ex.getBindingResult()
+    public ResponseEntity<ApiErrorResponse> handleValidation(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
+        String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .collect(
-                        Collectors.toMap(error -> error.getField(),
-                                error -> error.getDefaultMessage(),
-                                (first, second) -> first)); //handle duplicate keys use only first occurance
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
 
-        return ResponseEntity
-                .badRequest()
-                .body(errors);
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                400,
+                "Bad Request",
+                message,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -48,4 +56,6 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message",
                         "A record with the supplied information already exists"));
     }
+
+
 }
